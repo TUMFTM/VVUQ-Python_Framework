@@ -1,0 +1,2563 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema#",
+  "$id": "vvuq_schema.json",
+  "title": "VVUQ",
+  "$defs": {
+    "unit": {
+      "type": "string",
+      "enum": [
+        "none",
+        "m",
+        "1/m",
+        "s",
+        "m/s",
+        "m/s^2",
+        "m/s^3",
+        "km/h",
+        "kg",
+        "°",
+        "°C"
+      ],
+      "default": "none",
+      "title": "Unit",
+      "description": "Optionally select the unit."
+    },
+    "label": {
+      "type": "string",
+      "title": "Label",
+      "description": "Please specify a label for plotting."
+    },
+    "filter": {
+      "type": "string",
+      "enum": [
+        "none",
+        "Butterworth_GRVA"
+      ],
+      "default": "none",
+      "title": "Filter",
+      "description": "Please select the filtering method.",
+      "options": {
+        "infoText": "- 'none': no filtering;\n- 'Butterworth_GRVA': Butterworth filter according to GRVA document for UNECE-R79."
+      }
+    },
+    "noise": {
+      "type": "string",
+      "enum": [
+        "none",
+        "normal"
+      ],
+      "default": "none",
+      "title": "Noise",
+      "description": "Please select artificial noise.",
+      "options": {
+        "infoText": "- 'none': no artificial noise;\n- 'normal': normally distributed, artificial measurement noise for experimental simulations in the validation domain to emulate the real world."
+      }
+    },
+    "mu_noise": {
+      "type": "number",
+      "title": "Mean value",
+      "description": "Please specify the mean value.",
+      "options": {
+        "dependencies": {
+          "noise": "normal"
+        }
+      }
+    },
+    "sigma_noise": {
+      "type": "number",
+      "title": "Standard Deviation",
+      "description": "Please specify the standard deviation.",
+      "options": {
+        "dependencies": {
+          "noise": "normal"
+        }
+      }
+    },
+    "min": {
+      "type": "number",
+      "title": "Lower Limit",
+      "description": "Please specify the lower limit."
+    },
+    "min_uniform": {
+      "$ref": "#/$defs/min",
+      "options": {
+        "dependencies": {
+          "distribution": "uniform"
+        }
+      }
+    },
+    "max": {
+      "type": "number",
+      "title": "Upper Limit",
+      "description": "Please specify the upper limit."
+    },
+    "max_uniform": {
+      "$ref": "#/$defs/max",
+      "options": {
+        "dependencies": {
+          "distribution": "uniform"
+        }
+      }
+    },
+    "distribution": {
+      "type": "string",
+      "enum": [
+        "normal",
+        "uniform"
+      ],
+      "title": "Distribution Type",
+      "description": "Please specify the distribution type."
+    },
+    "mu": {
+      "type": "number",
+      "title": "Mean value",
+      "description": "Please specify mean value.",
+      "options": {
+        "dependencies": {
+          "distribution": "normal"
+        }
+      }
+    },
+    "sigma": {
+      "type": "number",
+      "title": "Standard Deviation",
+      "description": "Please specify standard deviation.",
+      "options": {
+        "dependencies": {
+          "distribution": "normal"
+        }
+      }
+    },
+    "parameter_name_selection": {
+      "type": "string",
+      "title": "Parameter",
+      "description": "Please select the parameters.",
+      "watch": {
+        "w_parameters": "cross_domain.parameters.parameters"
+      },
+      "enumSource": [
+        {
+          "source": "w_parameters",
+          "value": "{{item.name}}"
+        }
+      ]
+    },
+    "qoi_name_selection": {
+      "type": "string",
+      "title": "QoIs",
+      "description": "Please select the QoIs.",
+      "watch": {
+        "w_qois": "cross_domain.assessment.qoi"
+      },
+      "enumSource": [
+        {
+          "source": "w_qois",
+          "value": "{{item.name}}"
+        }
+      ]
+    },
+    "parameter_selection_array": {
+      "type": "array",
+      "title": "Parameters",
+      "format": "table",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/parameter_name_selection"
+      },
+      "default": [
+        {
+          "name": "$Ego_Init_Velocity"
+        }
+      ]
+    },
+    "distribution_parameters": {
+      "type": "array",
+      "format": "table",
+      "title": "Distribution Parameters",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "title": "Parameter",
+        "properties": {
+          "name": {
+            "$ref": "#/$defs/parameter_name_selection"
+          },
+          "distribution": {
+            "$ref": "#/$defs/distribution"
+          },
+          "mu": {
+            "$ref": "#/$defs/mu"
+          },
+          "sigma": {
+            "$ref": "#/$defs/sigma"
+          },
+          "min": {
+            "$ref": "#/$defs/min_uniform"
+          },
+          "max": {
+            "$ref": "#/$defs/max_uniform"
+          }
+        },
+        "required": [
+          "name",
+          "distribution"
+        ],
+        "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "distribution": {
+                      "const": "normal"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "mu",
+                    "sigma"
+                  ]
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "distribution": {
+                      "const": "uniform"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "min",
+                    "max"
+                  ]
+                }
+              }
+            ]
+      },
+      "default": [
+        {
+          "name": "$Ego_Init_Velocity"
+        }
+      ]
+    },
+    "simulator": {
+      "type": "object",
+      "title": "Simulator",
+      "properties": {
+        "simulate": {
+          "type": "boolean",
+          "default": true,
+          "format": "checkbox",
+          "description": "Please select if actual simulations have to be performed.",
+          "options": {
+            "infoText": "- 'true': perform simulations;\n- 'false': skip tests. Please select this only if the tests have been executed in advance!"
+          }
+        },
+        "tool": {
+          "type": "string",
+          "enum": [
+            "IPG_CarMaker",
+            "R79_Vehicle"
+          ],
+          "default": "IPG_CarMaker",
+          "title": "Tool",
+          "description": "Please select the tool chain to be used for the simulations.",
+          "options": {
+            "infoText": "- 'IPG_CarMaker': IPG CarMaker simulator including remote control with parameter variations;\n- 'R79_Vehicle': Vehicle setup used for R-79 project."
+          }
+        },
+        "result_folder": {
+          "type": "string",
+          "default": "D:/Data/VVUQ/R79_LKFT_nondeterministic/Experiment",
+          "title": "Result Folder",
+          "description": "Please specify the absolute or relative path to the folder where the quantities are stored.",
+          "options": {
+            "infoText": "It has a substructure for the domains: folder/validation/..., folder/application/..., etc."
+          }
+        },
+        "result_format": {
+          "type": "string",
+          "enum": [
+            "erg",
+            "mf4"
+          ],
+          "default": "erg",
+          "title": "Result Format",
+          "description": "Please select the file format of the measurement files.",
+          "options": {
+            "infoText": "- 'erg': IPG CarMaker result file format;\n- 'mf4': Measurement Data Format version 4 from Vector."
+          }
+        },
+        "exe": {
+          "type": "string",
+          "default": "C:/IPG/carmaker/win64-9.1.1/bin/CM.exe",
+          "title": "Executable Path",
+          "description": "Please specify the path to the CarMaker executable.",
+          "options": {
+            "dependencies": {
+              "simulate": true,
+              "tool": "IPG_CarMaker"
+            }
+          }
+        },
+        "ip": {
+          "type": "string",
+          "default": "localhost",
+          "title": "IP",
+          "description": "Please specify the IP address to communicate with CarMaker.",
+          "options": {
+            "dependencies": {
+              "simulate": true,
+              "tool": "IPG_CarMaker"
+            }
+          }
+        },
+        "port": {
+          "type": "integer",
+          "default": 16600,
+          "minimum": 1024,
+          "maximum": 65535,
+          "title": "Port",
+          "description": "Please specify the TCP/IP port to communicate with CarMaker.",
+          "options": {
+            "dependencies": {
+              "simulate": true,
+              "tool": "IPG_CarMaker"
+            }
+          }
+        },
+        "project": {
+          "type": "string",
+          "default": "sim",
+          "title": "Project",
+          "description": "Please specify the name of the CarMaker project as absolute or relative path.",
+          "options": {
+            "dependencies": {
+              "simulate": true,
+              "tool": "IPG_CarMaker"
+            }
+          }
+        },
+        "testrun": {
+          "type": "string",
+          "default": "R79_LKFT_P911_1777kg",
+          "title": "TestRun",
+          "description": "Please specify the name of the test run within the CarMaker project.",
+          "options": {
+            "dependencies": {
+              "simulate": true,
+              "tool": "IPG_CarMaker"
+            }
+          }
+        }
+      },
+      "required": [
+        "simulate",
+        "tool",
+        "result_folder",
+        "result_format"
+      ],
+      "if": {
+        "allOf": [
+          {
+            "properties": {
+              "simulate": {
+                "const": true
+              }
+            }
+          },
+          {
+            "properties": {
+              "tool": {
+                "const": "IPG_CarMaker"
+              }
+            }
+          }
+        ]
+      },
+      "then": {
+        "required": [
+          "exe",
+          "ip",
+          "port",
+          "project",
+          "testrun"
+        ]
+      }
+    },
+    "scenarios": {
+      "type": "object",
+      "title": "Scenarios",
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": [
+            "mcs",
+            "lhs",
+            "full_factorial_doe",
+            "manual",
+            "read_csv",
+            "post"
+          ],
+          "default": "full_factorial_doe",
+          "title": "Method",
+          "description": "Please select the method to generate scenarios.",
+          "options": {
+            "infoText": "- 'mcs': use Monte Carlo Sampling within parameter ranges (uniform);\n- 'lhs': use Latin Hypercube Sampling within parameter ranges;\n- 'full_factorial_doe': use full factorial Design of Experiments (DoE);\n- 'manual': specify the samples manually in this config file;\n- 'read_csv': import the samples from a joint csv file;\n- 'post': extract the scenarios in assessment post-processing, instead of designing them in advance."
+          }
+        },
+        "number_samples": {
+          "type": "integer",
+          "minimum": 2,
+          "default": 5,
+          "title": "Number Samples",
+          "description": "Please specify the number of samples.",
+          "options": {
+            "dependencies": {
+              "method": [
+                "mcs",
+                "lhs"
+              ]
+            }
+          }
+        },
+        "space_parameters_mcs_lhs": {
+          "$ref": "#/$defs/distribution_parameters",
+          "title": "Space Parameters",
+          "options": {
+            "dependencies": {
+              "method": [
+                "mcs",
+                "lhs"
+              ]
+            }
+          }
+        },
+        "space_parameters_ffd": {
+          "type": "array",
+          "format": "table",
+          "title": "Space Parameters",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "title": "Parameter",
+            "properties": {
+              "name": {
+                "$ref": "#/$defs/parameter_name_selection"
+              },
+              "min": {
+                "$ref": "#/$defs/min"
+              },
+              "max": {
+                "$ref": "#/$defs/max"
+              },
+              "number_samples": {
+                "type": "integer",
+                "minimum": 2,
+                "default": 2,
+                "title": "Number Samples",
+                "description": "Please specify the number of samples."
+              }
+            },
+            "required": [
+              "name",
+              "min",
+              "max",
+              "number_samples"
+            ]
+          },
+          "default": [
+            {
+              "name": "$Ego_Init_Velocity"
+            }
+          ],
+          "options": {
+            "dependencies": {
+              "method": "full_factorial_doe"
+            }
+          }
+        },
+        "space_parameters_manual": {
+          "type": "array",
+          "format": "table",
+          "title": "Space Parameters",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "title": "Parameter",
+            "properties": {
+              "name": {
+                "$ref": "#/$defs/parameter_name_selection"
+              },
+              "values": {
+                "type": "array",
+                "title": "Values",
+                "items": {
+                  "type": "number"
+                }
+              }
+            },
+            "required": [
+              "name",
+              "values"
+            ]
+          },
+          "default": [
+            {
+              "name": "$Ego_Init_Velocity"
+            }
+          ],
+          "options": {
+            "dependencies": {
+              "method": "manual"
+            }
+          }
+        }
+      },
+      "required": [
+        "method"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "method": {
+                "enum": [
+                  "mcs",
+                  "lhs"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "number_samples",
+              "space_parameters_mcs_lhs"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "method": {
+                "const": "full_factorial_doe"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "space_parameters_ffd"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "method": {
+                "const": "manual"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "space_parameters_manual"
+            ]
+          }
+        }
+      ]
+    },
+    "propagation": {
+      "type": "object",
+      "title": "Propagation",
+      "properties": {
+        "is_propagation": {
+          "type": "boolean",
+          "default": true,
+          "format": "checkbox",
+          "title": "Propagation",
+          "description": "Please select if uncertain parameters should be considered or if the behavior is deterministic."
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "direct",
+            "mean",
+            "two_loop"
+          ],
+          "default": "two_loop",
+          "title": "Uncertainty Propagation Method",
+          "description": "Please select the type of sampling of epistemic and aleatory parameters.",
+          "options": {
+            "dependencies": {
+              "is_propagation": true
+            },
+            "infoText": "- 'direct': use executed scenarios directly from an experiment as they are;\n- 'mean': average executed scenarios from an experiment for a deterministic simulation;\n- 'two_loop': use epistemic samples in the outer loop and aleatory samples in the inner loop."
+          }
+        },
+        "repetitions": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 10,
+          "title": "Repetitions",
+          "description": "Please select the number of repetitions for each space scenario.",
+          "options": {
+            "dependencies": {
+              "is_propagation": true,
+              "method": "single_loop"
+            },
+            "infoText": "Repetitions means the number of tests, not one less."
+          }
+        },
+        "epistemic_method": {
+          "type": "string",
+          "enum": [
+            "mcs",
+            "lhs",
+            "full_factorial_doe"
+          ],
+          "default": "full_factorial_doe",
+          "title": "Epistemic Sampling Method",
+          "description": "Please select the sampling method for the epistemic parameters.",
+          "options": {
+            "dependencies": {
+              "is_propagation": true,
+              "method": [
+                "single_loop",
+                "two_loop"
+              ]
+            },
+            "infoText": "- 'mcs': use Monte Carlo Sampling within parameter ranges (uniform);\n- 'lhs': use Latin Hypercube Sampling within parameter ranges;\n- 'full_factorial_doe': use full factorial Design of Experiments (DoE)."
+          }
+        },
+        "number_epistemic_samples": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 10,
+          "title": "Number Epistemic Samples",
+          "description": "Please select the number of epistemic samples.",
+          "options": {
+            "dependencies": {
+              "is_propagation": true,
+              "method": "two_loop",
+              "epistemic_method": [
+                "mcs",
+                "lhs"
+              ]
+            },
+            "infoText": "It should reflect the number of epistemic parameters;\n- 'lhs': use Latin Hypercube Sampling within parameter ranges."
+          }
+        },
+        "aleatory_method": {
+          "type": "string",
+          "enum": [
+            "mcs",
+            "lhs"
+          ],
+          "default": "mcs",
+          "title": "Aleatory Sampling Method",
+          "description": "Please select the sampling method for the aleatory parameters.",
+          "options": {
+            "dependencies": {
+              "is_propagation": true,
+              "method": [
+                "single_loop",
+                "two_loop"
+              ]
+            },
+            "infoText": "- 'mcs': use Monte Carlo Sampling within parameter distributions."
+          }
+        },
+        "number_aleatory_samples": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 10,
+          "title": "Number Aleatory Samples",
+          "description": "Please select the number of aleatory samples.",
+          "options": {
+            "dependencies": {
+              "is_propagation": true,
+              "method": "two_loop"
+            },
+            "infoText": "It should reflect the number of aleatory parameters."
+          }
+        },
+        "epistemic_parameters": {
+          "type": "array",
+          "format": "table",
+          "title": "Epistemic Parameters",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "title": "Parameter",
+            "properties": {
+              "name": {
+                "$ref": "#/$defs/parameter_name_selection"
+              },
+              "min": {
+                "$ref": "#/$defs/min"
+              },
+              "max": {
+                "$ref": "#/$defs/max"
+              },
+              "number_epistemic_samples": {
+                "type": "integer",
+                "minimum": 2,
+                "default": 2,
+                "title": "Number Samples",
+                "description": "Please specify the number of samples.",
+                "options": {
+                  "dependencies": {
+                    "epistemic_method": "full_factorial_doe"
+                  }
+                }
+              }
+            },
+            "required": [
+              "name",
+              "min",
+              "max"
+            ],
+            "if": {
+              "properties": {
+                "epistemic_method": {
+                  "const": "full_factorial_doe"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "number_epistemic_samples"
+              ]
+            }
+          },
+          "default": [
+            {
+              "name": "Dummy"
+            }
+          ],
+          "options": {
+            "dependencies": {
+              "is_propagation": true
+            }
+          }
+        },
+        "aleatory_parameters": {
+          "$ref": "#/$defs/distribution_parameters",
+          "title": "Aleatory Parameters",
+          "options": {
+            "dependencies": {
+              "is_propagation": true
+            }
+          }
+        }
+      },
+      "required": [
+        "is_propagation"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "is_propagation": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "method",
+              "epistemic_parameters",
+              "aleatory_parameters"
+            ]
+          }
+        },
+        {
+          "if": {
+            "allOf": [
+              {
+                "properties": {
+                  "is_propagation": {
+                    "const": true
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "method": {
+                    "enum": [
+                      "single_loop",
+                      "two_loop"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          "then": {
+            "required": [
+              "epistemic_method",
+              "aleatory_method"
+            ]
+          }
+        },
+        {
+          "if": {
+            "allOf": [
+              {
+                "properties": {
+                  "is_propagation": {
+                    "const": true
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "method": {
+                    "const": "two_loop"
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "epistemic_method": {
+                    "enum": [
+                      "mcs",
+                      "lhs"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          "then": {
+            "required": [
+              "number_epistemic_samples"
+            ]
+          }
+        },
+        {
+          "if": {
+            "allOf": [
+              {
+                "properties": {
+                  "is_propagation": {
+                    "const": true
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "method": {
+                    "const": "two_loop"
+                  }
+                }
+              }
+            ]
+          },
+          "then": {
+            "required": [
+              "number_aleatory_samples"
+            ]
+          }
+        }
+      ]
+    },
+    "decision_making": {
+      "type": "object",
+      "title": "Decision Making",
+      "properties": {
+        "qois": {
+          "type": "array",
+          "format": "table",
+          "title": "Quantities of Interest",
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "title": "QoI",
+            "properties": {
+              "name": {
+                "$ref": "#/$defs/qoi_name_selection"
+              },
+              "type": {
+                "type": "string",
+                "title": "Type",
+                "enum": [
+                  "absolute",
+                  "relative"
+                ],
+                "description": "Please specify the threshold type.",
+                "options": {
+                  "infoText": "- 'absolute': compare metric values against absolute threshold in the same unit as the QoI;\n- 'relative': compare metric values against relative threshold in percent compared to the system responses."
+                }
+              },
+              "lower_threshold": {
+                "type": "number",
+                "title": "Lower Threshold",
+                "description": "Please specify the lower threshold.",
+                "options": {
+                  "dependencies": {
+                    "type": [
+                      "absolute",
+                      "relative"
+                    ]
+                  }
+                }
+              },
+              "upper_threshold": {
+                "type": "number",
+                "title": "Upper Threshold",
+                "description": "Please specify the upper threshold.",
+                "options": {
+                  "dependencies": {
+                    "type": [
+                      "absolute",
+                      "relative"
+                    ]
+                  }
+                }
+              }
+            },
+            "required": [
+              "name",
+              "type"
+            ],
+            "if": {
+              "properties": {
+                "type": {
+                  "enum": [
+                    "absolute",
+                    "relative"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "lower_threshold",
+                "upper_threshold"
+              ]
+            }
+          }
+        }
+      },
+      "required": [
+        "qois"
+      ]
+    },
+    "plot_space_samples": {
+      "type": "string",
+      "title": "Space Samples",
+      "description": "Please select the space indices."
+    },
+    "plot_epistemic_samples": {
+      "type": "string",
+      "title": "Epistemic Samples",
+      "description": "Please select the epistemic indices."
+    },
+    "plot_aleatory_samples": {
+      "type": "string",
+      "title": "Aleatory Samples",
+      "description": "Please select the aleatory indices."
+    },
+    "plot_repetitions": {
+      "type": "string",
+      "title": "Repetitions",
+      "description": "Please select the repetition indices."
+    },
+    "plot_timeseries": {
+      "type": "string",
+      "title": "Time Series",
+      "description": "Please specify the time slice."
+    },
+    "domain": {
+      "type": "string",
+      "enum": [
+        "validation",
+        "application"
+      ],
+      "title": "Domain",
+      "description": "Please select the domain."
+    },
+    "instance":{
+      "type": "string",
+      "enum": [
+        "simulator",
+        "experiment"
+      ],
+      "title": "Test Instance",
+      "description": "Please select the test instance."
+    }
+  },
+  "type": "object",
+  "required": [
+    "project",
+    "cross_domain",
+    "verification",
+    "calibration",
+    "validation",
+    "application"
+  ],
+  "properties": {
+    "project": {
+      "type": "object",
+      "title": "Project",
+      "properties": {
+        "name": {
+          "type": "string",
+          "title": "Name",
+          "description": "Please specify the name of this VVUQ project."
+        },
+        "id": {
+          "type": "string",
+          "title": "Identifier",
+          "description": "Please specify a short ID for this project."
+        },
+        "author": {
+          "type": "string",
+          "title": "Author",
+          "description": "Optionally provide the project authors."
+        },
+        "date": {
+          "type": "string",
+          "format": "date",
+          "title": "Date",
+          "description": "Optionally speficy the project creation date."
+        },
+        "description": {
+          "type": "string",
+          "title": "Description",
+          "description": "Optionally describe this project."
+        }
+      },
+      "required": [
+        "name",
+        "id"
+      ]
+    },
+    "cross_domain": {
+      "type": "object",
+      "title": "Cross-Domain",
+      "properties": {
+        "simulator": {
+          "$ref": "#/$defs/simulator",
+          "properties": {
+            "passive": {
+              "type": "boolean",
+              "default": false,
+              "format": "checkbox",
+              "title": "Passive",
+              "description": "Please check this convenience shortcut to overwrite all simulate flags to false and all methods to read_csv."
+            },
+            "result_folder": {
+              "default": "data/r79_nondeterministic/Simulator"
+            },
+            "testrun": {
+              "default": "R79_LKFT_P911_1377kg"
+            }
+          },
+          "required": [
+            "passive"
+          ]
+        },
+        "experiment": {
+          "$ref": "#/$defs/simulator",
+          "title": "Experiment",
+          "properties": {
+            "application": {
+              "type": "boolean",
+              "default": false,
+              "format": "checkbox",
+              "title": "Application Scenarios",
+              "description": "Please select whether reference results are available at the application scenarios to validate the VVUQ method."
+            },
+            "result_folder": {
+              "default": "data/r79_nondeterministic/Experiment"
+            },
+            "testrun": {
+              "default": "R79_LKFT_P911_1777kg"
+            }
+          },
+          "required": [
+            "application"
+          ]
+        },
+        "parameters": {
+          "type": "object",
+          "title": "Parameters",
+          "properties": {
+            "parameters": {
+              "type": "array",
+              "format": "table",
+              "title": "Parameters",
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "title": "Parameter",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "title": "Name",
+                    "description": "Please specify the parameter name.",
+                    "options": {
+                      "infoText": "CarMaker offers defined key values such as 'Env.Temperature' or own named values '$name'."
+                    }
+                  },
+                  "unit": {
+                    "$ref": "#/$defs/unit"
+                  },
+                  "noise": {
+                    "$ref": "#/$defs/noise"
+                  },
+                  "noise_mu": {
+                    "$ref": "#/$defs/mu_noise"
+                  },
+                  "noise_sigma": {
+                    "$ref": "#/$defs/sigma_noise"
+                  },
+                  "label": {
+                    "$ref": "#/$defs/label"
+                  }
+                },
+                "required": [
+                  "name",
+                  "unit",
+                  "noise",
+                  "label"
+                ],
+                "if": {
+                  "properties": {
+                    "noise": {
+                      "const": "normal"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "mu",
+                    "sigma"
+                  ]
+                }
+              },
+              "default": [
+                {
+                  "name": "$Ego_Init_Velocity",
+                  "unit": "m/s",
+                  "noise": "none"
+                }
+              ]
+            }
+          }
+        },
+        "quantities": {
+          "type": "object",
+          "title": "Quantities",
+          "properties": {
+            "quantities": {
+              "type": "array",
+              "format": "table",
+              "title": "Quantities",
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "title": "Quantity",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "title": "Name",
+                    "description": "Please specify the quantity name."
+                  },
+                  "unit": {
+                    "$ref": "#/$defs/unit"
+                  },
+                  "filter": {
+                    "$ref": "#/$defs/filter"
+                  },
+                  "noise": {
+                    "$ref": "#/$defs/noise"
+                  },
+                  "noise_mu": {
+                    "$ref": "#/$defs/mu_noise"
+                  },
+                  "noise_sigma": {
+                    "$ref": "#/$defs/sigma_noise"
+                  }
+                },
+                "required": [
+                  "name",
+                  "unit",
+                  "filter",
+                  "noise"
+                ],
+                "if": {
+                  "properties": {
+                    "noise": {
+                      "const": "normal"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "mu",
+                    "sigma"
+                  ]
+                }
+              },
+              "default": [
+                {
+                  "name": "Car.v",
+                  "unit": "m/s",
+                  "filter": "none",
+                  "noise": "none"
+                }
+              ]
+            }
+          }
+        },
+        "assessment": {
+          "type": "object",
+          "title": "Assessment",
+          "properties": {
+            "method": {
+              "type": "string",
+              "enum": [
+                "default",
+                "read_csv",
+                "UNECE-R79"
+              ],
+              "default": "UNECE-R79",
+              "title": "Method",
+              "description": "Please select the assessment method.",
+              "options": {
+                "infoText": "- 'default': use the default assessment procedure without exceptions;\n- 'read_csv': directly read the assessment KPIs from the csv file;\n- 'UNECE-R79': perform assessment according to the regulation 79 from UNECE regarding LKAS.\n\n\n QoI name:\n- quantity names from the quantities table;\n- 'TTC': Time-to-Collision;\n- 'D2LL': Distance to left line from the left vehicle boundary;\n- 'Car.Jerk': lateral jerk as derivative of the lateral acceleration.\n\n QoI KPI:\n- 'none': time signals of QoIs used without extraction of characteristic values. 'none' only valid for all QoIs at the same time;\n- 'min': minimum value of the time signal\n- 'max': maximum value of the time signal;\n- 'mean': mean value of the time signal.\n\nIf multiple characteristic values shall be extracted from the same time signal, currently create multiple elements with the same name key, but varying kpi key."
+              }
+            },
+            "repetition_kpi": {
+              "type": "string",
+                "enum": [
+                  "none",
+                  "mean"
+                ],
+                "default": "none",
+                "title": "Repetition KPI",
+                "description": "Please select how to deal with multiple repetitions.",
+                "options": {
+                  "infoText": "- 'none': convert repetitions to CDF;\n- 'mean': average the repetitions",
+                  "dependencies": {
+                    "method": [
+                      "default",
+                      "UNECE-R79"
+                    ]
+                  }
+                }
+            },
+            "is_event_finder": {
+              "type": "boolean",
+              "default": false,
+              "format": "checkbox",
+              "title": "Event Finder",
+              "description": "Please select if only valid events according to the R-79 should be extracted from the time signals.",
+              "options": {
+                "dependencies": {
+                  "method": "UNECE-R79"
+                }
+              }
+            },
+            "qois": {
+              "type": "array",
+              "format": "table",
+              "title": "Quantities of Interest",
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "title": "QoIs",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "title": "Name",
+                    "description": "Please specify the QoI name."
+                  },
+                  "unit": {
+                    "$ref": "#/$defs/unit"
+                  },
+                  "kpi": {
+                    "type": "string",
+                    "enum": [
+                      "none",
+                      "min",
+                      "max",
+                      "mean"
+                    ],
+                    "default": "min",
+                    "title": "KPI",
+                    "description": "Please select the KPI.",
+                    "options": {
+                      "dependencies": {
+                        "method": [
+                          "default",
+                          "UNECE-R79"
+                        ]
+                      }
+                    }
+                  },
+                  "label": {
+                    "$ref": "#/$defs/label"
+                  }
+                },
+                "required": [
+                  "name",
+                  "unit",
+                  "label"
+                ]
+              },
+              "default": [
+                {
+                  "name": "D2LL",
+                  "unit": "m",
+                  "kpi": "min"
+                }
+              ]
+            }
+          },
+          "required": [
+            "method",
+            "qois"
+          ],
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "method": {
+                    "enum": [
+                      "default",
+                      "UNECE-R79"
+                    ]
+                  }
+                }
+              },
+              "then": {
+                "allOf": [
+                  {
+                    "required": [
+                      "repetition_kpi"
+                    ]
+                  },
+                  {
+                    "properties": {
+                      "qois": {
+                        "items": {
+                          "required": [
+                            "kpi"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "method": {
+                    "const": "UNECE-R79"
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "is_event_finder"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "simulator",
+        "experiment",
+        "parameters",
+        "quantities",
+        "assessment"
+      ],
+      "format": "categories",
+      "basicCategoryTitle": "Main"
+    },
+    "verification": {
+      "type": "object",
+      "title": "Verification",
+      "properties": {
+        "scenarios": {
+          "type": "object",
+          "title": "Scenarios",
+          "properties": {
+            "method": {
+              "type": "string",
+              "enum": [
+                "manual",
+                "read_csv"
+              ],
+              "default": "manual",
+              "title": "Method",
+              "description": "Please select the method to generate verification scenarios.",
+              "options": {
+                "infoText": "- 'mcs': use Monte Carlo Sampling within parameter ranges (uniform);\n- 'lhs': use Latin Hypercube Sampling within parameter ranges;\n- 'full_factorial_doe': use full factorial Design of Experiments (DoE);\n- 'manual': specify the samples manually in this config file;\n- 'read_csv': import the samples from a joint csv file;\n- 'post': extract the scenarios in assessment post-processing, instead of designing them in advance."
+              }
+            },
+            "space_parameters_manual": {
+              "type": "array",
+              "format": "table",
+              "title": "Space Parameters",
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "title": "Parameter",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "title": "Name",
+                    "description": "Please specify the parameters."
+                  },
+                  "values": {
+                    "type": "array",
+                    "title": "Values",
+                    "items": {
+                      "type": "number"
+                    },
+                    "description": "Please specify the parameter values.",
+                    "options": {
+                      "dependencies": {
+                        "method": "manual"
+                      }
+                    }
+                  }
+                }
+              },
+              "default": [
+                {
+                  "name": "$stepsize"
+                }
+              ],
+              "options": {
+                "dependencies": {
+                  "method": "manual"
+                }
+              }
+            }
+          },
+          "required": [
+            "method"
+          ],
+          "if": {
+            "properties": {
+              "method": {
+                "const": "manual"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "space_parameters_manual"
+            ]
+          }
+        },
+        "discretization": {
+          "type": "object",
+          "title": "Discretization",
+          "properties": {
+            "discretization_method": {
+              "type": "string",
+              "enum": [
+                "none",
+                "Richardson"
+              ],
+              "default": "Richardson",
+              "title": "Discretization Method",
+              "description": "Please select the discretization method.",
+              "options": {
+                "infoText": "- 'none': skip verification\n- 'Richardson': use Richardson extrapolation to estimate discretization error."
+              }
+            },
+            "discretization_uncertainty": {
+              "type": "string",
+              "enum": [
+                "GCI"
+              ],
+              "default": "GCI",
+              "title": "Discretization Uncertainty",
+              "description": "Please select the discretization uncertainty.",
+              "options": {
+                "infoText": "- 'GCI': use Roache's Grid Convergence Index (GCI) for a conversion from a discretization error to an uncertainty.",
+                "dependencies": {
+                  "discretization_method": "Richardson"
+                }
+              }
+            },
+            "GCI_safety_factor": {
+              "type": "number",
+              "default": 1.5,
+              "title": "GCI Safety Factor",
+              "description": "Please specify the safety factor for the GCI.",
+              "options": {
+                "dependencies": {
+                  "discretization_uncertainty": "GCI"
+                }
+              }
+            }
+          },
+          "required": [
+            "discretization_method"
+          ],
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "discretization_method": {
+                    "const": "Richardson"
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "discretization_uncertainty"
+                ]
+              }
+            },
+            {
+              "if": {
+                "allOf": [
+                  {
+                    "properties": {
+                      "discretization_method": {
+                        "const": "Richardson"
+                      }
+                    }
+                  },
+                  {
+                    "properties": {
+                      "discretization_uncertainty": {
+                        "const": "GCI"
+                      }
+                    }
+                  }
+                ]
+              },
+              "then": {
+                "required": [
+                  "GCI_safety_factor"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "scenarios",
+        "discretization"
+      ],
+      "format": "categories",
+      "basicCategoryTitle": "Main"
+    },
+    "calibration": {
+      "type": "object",
+      "title": "Calibration",
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": [
+            "none"
+          ],
+          "default": "none",
+          "title": "Method",
+          "description": "The calibration part is currently not implemented."
+        }
+      },
+      "required": [
+        "method"
+      ]
+    },
+    "validation": {
+      "type": "object",
+      "title": "Validation",
+      "properties": {
+        "scenarios": {
+          "$ref": "#/$defs/scenarios"
+        },
+        "propagation": {
+          "$ref": "#/$defs/propagation",
+          "properties": {
+            "tool_helper": {
+              "type": "string",
+              "title": "Tool Helper",
+              "description": "This can be ignored and is only relevant to make a field available for the editor.",
+              "watch": {
+                "w_experiment_tool": "cross_domain.experiment.tool"
+              },
+              "template": "{{w_experiment_tool}}"
+            },
+            "reference_method": {
+              "type": "string",
+              "enum": [
+                "single_loop"
+              ],
+              "default": "single_loop",
+              "title": "Uncertainty Propagation Method for Reference Simulation",
+              "description": "Please select the type of sampling of epistemic and aleatory parameters.",
+              "options": {
+                "dependencies": {
+                  "tool_helper": "IPG_CarMaker",
+                  "is_propagation": true
+                },
+                "infoText": "- 'single_loop': use the same number of epistemic and aleatory samples in the same loop;\n- 'two_loop': use epistemic samples in the outer loop and aleatory samples in the inner loop."
+              }
+            },
+            "reference_epistemic_method": {
+              "type": "string",
+              "enum": [
+                "mcs"
+              ],
+              "default": "mcs",
+              "title": "Epistemic Sampling Method for Reference Simulation",
+              "description": "Please select the sampling method for the epistemic parameters.",
+              "options": {
+                "dependencies": {
+                  "tool_helper": "IPG_CarMaker",
+                  "is_propagation": true
+                },
+                "infoText": "- 'mcs': use Monte Carlo Sampling within parameter ranges (uniform)"
+              }
+            },
+            "reference_aleatory_method": {
+              "type": "string",
+              "enum": [
+                "mcs"
+              ],
+              "default": "mcs",
+              "title": "Aleatory Sampling Method for Reference Simulation",
+              "description": "Please select the sampling method for the aleatory parameters.",
+              "options": {
+                "dependencies": {
+                  "tool_helper": "IPG_CarMaker",
+                  "is_propagation": true
+                },
+                "infoText": "- 'mcs': use Monte Carlo Sampling within parameter distributions."
+              }
+            },
+            "reference_repetitions": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 10,
+              "title": "Repetitions for Reference Simulation",
+              "description": "Please select the number of repetitions for each space scenario.",
+              "options": {
+                "dependencies": {
+                  "tool_helper": "IPG_CarMaker",
+                  "is_propagation": true,
+                  "reference_method": "single_loop"
+                },
+                "infoText": "Repetitions means the number of tests, not one less."
+              }
+            }
+          }
+        },
+        "metric": {
+          "type": "object",
+          "title": "Metric",
+          "properties": {
+            "metric": {
+              "type": "string",
+              "enum": [
+                "avm",
+                "mavm",
+                "iavm",
+                "mean_ci",
+                "read_csv",
+                "ks_test",
+                "absolute_deviation",
+                "relative_deviation",
+                "relative_deviation_2prediction",
+                "se",
+                "me",
+                "mne",
+                "mae",
+                "mane",
+                "rmse",
+                "nrmse",
+                "r_squared",
+                "corrcoef",
+                "TheilsU",
+                "Oberkampf_2002",
+                "Russell",
+                "Sprague"
+              ],
+              "default": "mavm",
+              "title": "Metric",
+              "description": "Please select the validation metric.",
+              "options": {
+                "infoText": "- 'avm': area validation metric by Oberkampf to compare intervals, CDFs or p-boxes;\n- 'mavm': modified area validation metric by Voyles to compare intervals, CDFs or p-boxes;\n- 'iavm': interval area validation metric by Wang to compare intervals, CDFs or p-boxes;\n- 'mean_ci': mean value metric with confidence intervals by Oberkampf to compare CDFs;\n- 'ks_test' Kolmogorov-Smirnov test to compare CDFs;\n- 'absolute_deviation': absolute deviation to compare scalar values;\n- 'relative_deviation': relative deviation to compare scalar values;\n- 'se': squared error to compare time series;\n- 'me': mean error to compare time series;\n- 'mne': mean normalized error to compare time series;\n- 'mae': mean absolute error to compare time series;\n- 'mane': mean absolute normalized error to compare time series;\n- 'rmse': root mean square error to compare time series;\n- 'nrmse' normalized root mean square error to compare time series;\n- 'r_squared': R^2 metric to compare time series;\n- 'corrcoef': correlation coefficient to compare time series;\n- 'TheilsU': U value metric by Theils to compare time series;\n- 'Oberkampf_2002': older validation metric from Oberkampf to compare time series;\n- 'Russell': validation metric by Russell including phase information to compare time series;\n- 'Sprague': validation metric by Sprague and Geers including phase information to compare time series."
+              }
+            },
+            "mavm_f0": {
+              "type": "number",
+              "default": 4.0,
+              "minimum": 0,
+              "title": "f0 of safety factor",
+              "description": "Please select the f0 value of the safety factor.",
+              "options": {
+                "dependencies": {
+                  "metric": "mavm"
+                }
+              }
+            },
+            "mavm_f1": {
+              "type": "number",
+              "default": 1.25,
+              "minimum": 0,
+              "title": "f1 of safety factor",
+              "description": "Please select the f1 value of the safety factor.",
+              "options": {
+                "dependencies": {
+                  "metric": "mavm"
+                }
+              }
+            },
+            "iavm_alpha": {
+              "type": "number",
+              "default": 0.05,
+              "minimum": 0,
+              "maximum": 1,
+              "title": "Level of Significance",
+              "description": "Please select the type I error probability (alpha).",
+              "options": {
+                "dependencies": {
+                  "metric": "iavm"
+                }
+              }
+            }
+          },
+          "required": [
+            "metric"
+          ],
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "metric": {
+                    "const": "mavm"
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "mavm_f0",
+                  "mavm_f1"
+                ]
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "metric": {
+                    "const": "iavm"
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "iavm_alpha"
+                ]
+              }
+            }
+          ]
+        },
+        "decision_making": {
+          "$ref": "#/$defs/decision_making",
+          "properties": {
+            "qois": {
+              "items": {
+                "properties": {
+                  "name": {
+                    "$ref": "#/$defs/decision_making/properties/qois/items/properties/name"
+                  },
+                  "type": {
+                    "type": "string",
+                    "title": "Type",
+                    "enum": [
+                      "absolute",
+                      "relative",
+                      "ISO19364"
+                    ],
+                    "description": "Please specify the threshold type.",
+                    "options": {
+                      "infoText": "- 'absolute': compare metric values against absolute threshold in the same unit as the QoI;\n- 'relative': compare metric values against relative threshold in percent compared to the system responses;\n- 'ISO19364': compare system time responses with tolerance bands from the simulation time responses."
+                    }
+                  },
+                  "lower_threshold": {
+                    "$ref": "#/$defs/decision_making/properties/qois/items/properties/lower_threshold"
+                  },
+                  "upper_threshold": {
+                    "$ref": "#/$defs/decision_making/properties/qois/items/properties/upper_threshold"
+                  },
+                  "gain": {
+                    "type": "number",
+                    "title": "ISO Gain",
+                    "description": "Please specify the gain.",
+                    "options": {
+                      "dependencies": {
+                        "type": "ISO19364"
+                      }
+                    }
+                  },
+                  "offset": {
+                    "type": "number",
+                    "title": "ISO Offset",
+                    "description": "Please specify the offset.",
+                    "options": {
+                      "dependencies": {
+                        "type": "ISO19364"
+                      }
+                    }
+                  }
+                },
+                "if": {
+                  "properties": {
+                    "type": {
+                      "const": "ISO19364"
+                    }
+                  }
+                },
+                "then": {
+                  "required": [
+                    "gain",
+                    "offset"
+                  ]
+                }
+              },
+              "default": [
+                {
+                  "name": "D2LL",
+                  "type": "absolute",
+                  "lower_threshold": -0.1,
+                  "upper_threshold": 0.1
+                }
+              ]
+            }
+          }
+        },
+        "error_model": {
+          "type": "object",
+          "title": "Error Model",
+          "properties": {
+            "method": {
+              "type": "string",
+              "enum": [
+                "none",
+                "linear_regression",
+                "polynomial_regression",
+                "kriging",
+                "MLP",
+                "IPM"
+              ],
+              "default": "linear_regression",
+              "title": "Modeling Method",
+              "description": "Please select the error modeling method."
+            },
+            "degree": {
+              "type": "integer",
+              "default": 2,
+              "title": "Polynomial Degree",
+              "description": "Please select the polynomial degree.",
+              "options": {
+                "dependencies": {
+                  "method": [
+                    "polynomial_regression",
+                    "IPM"
+                  ]
+                }
+              }
+            },
+            "prediction_interval": {
+              "type": "boolean",
+              "default": true,
+              "format": "checkbox",
+              "title": "Prediction Interval",
+              "description": "Please select whether prediction uncertainties of the error model shall be considered.",
+              "options": {
+                "dependencies": {
+                  "method": [
+                    "linear_regression",
+                    "polynomial_regression",
+                    "kriging"
+                  ]
+                }
+              }
+            },
+            "alpha": {
+              "type": "number",
+              "default": 0.05,
+              "title": "Level of Significance",
+              "description": "Please select the type I error probability (alpha).",
+              "options": {
+                "dependencies": {
+                  "prediction_interval": true
+                }
+              }
+            },
+            "extrapolation_parameters": {
+              "$ref": "#/$defs/parameter_selection_array",
+              "title": "Extrapolation Parameters",
+              "options": {
+                "dependencies": {
+                  "method": [
+                    "linear_regression",
+                    "polynomial_regression",
+                    "kriging",
+                    "MLP",
+                    "IPM"
+                  ]
+                }
+              }
+            }
+          },
+          "required": [
+            "method"
+          ],
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "method": {
+                    "enum": [
+                      "polynomial_regression",
+                      "IPM"
+                    ]
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "degree"
+                ]
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "method": {
+                    "enum": [
+                      "linear_regression",
+                      "polynomial_regression",
+                      "kriging"
+                    ]
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "prediction_interval"
+                ]
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "prediction_interval": {
+                    "const": true
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "alpha"
+                ]
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "method": {
+                    "enum": [
+                      "linear_regression",
+                      "polynomial_regression",
+                      "kriging",
+                      "MLP",
+                      "IPM"
+                    ]
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "extrapolation_parameters"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "scenarios",
+        "metric",
+        "decision_making",
+        "error_model"
+      ],
+      "format": "categories",
+      "basicCategoryTitle": "Main"
+    },
+    "application": {
+      "type": "object",
+      "title": "Application",
+      "properties": {
+        "scenarios": {
+          "$ref": "#/$defs/scenarios"
+        },
+        "propagation": {
+          "$ref": "#/$defs/propagation"
+        },
+        "error_integration": {
+          "type": "object",
+          "title": "Error Integration",
+          "properties": {
+            "method": {
+              "type": "string",
+              "enum": [
+                "uncertainty_expansion"
+              ],
+              "default": "uncertainty_expansion",
+              "title": "Method",
+              "description": "Please select the error integration technique.",
+              "options": {
+                "infoText": "- 'uncertainty_expansion': expand uncertainties, possibly in both directions."
+              }
+            }
+          },
+          "required": [
+            "method"
+          ]
+        },
+        "decision_making": {
+          "$ref": "#/$defs/decision_making",
+          "properties": {
+            "confidence": {
+              "type": "number",
+              "default": 1.0,
+              "minimum": 0.0,
+              "maximum": 1.0,
+              "title": "Confidence",
+              "description": "Please select the statistical confidence (aleatory samples required)."
+            },
+            "qois": {
+              "default": [
+                {
+                  "name": "D2LL",
+                  "type": "absolute",
+                  "lower_threshold": 0,
+                  "upper_threshold": 1
+                }
+              ]
+            }
+          }
+        }
+      },
+      "required": [
+        "scenarios",
+        "error_integration",
+        "decision_making"
+      ],
+      "format": "categories",
+      "basicCategoryTitle": "Main"
+    },
+    "analysis": {
+      "type": "object",
+      "title": "Analysis",
+      "properties": {
+        "plots": {
+          "type": "object",
+          "title": "Plots",
+          "properties": {
+            "scenario_space_plots": {
+              "type": "array",
+              "format": "tabs-top",
+              "title": "Scenario Space Plots",
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "title": "Plot",
+                "properties": {
+                  "parameters": {
+                    "$ref": "#/$defs/parameter_selection_array",
+                    "minItems": 2,
+                    "maxItems": 3
+                  }
+                },
+                "required": [
+                  "parameters"
+                ]
+              },
+              "default": [
+                {
+                  "parameters": [
+                    "$Ego_Init_Velocity"
+                  ]
+                }
+              ]
+            },
+            "time_series_plots": {
+              "type": "array",
+              "format": "tabs-top",
+              "title": "Time Series Plots",
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "title": "Plot",
+                "properties": {
+                  "qois": {
+                    "$ref": "#/$defs/qoi_name_selection",
+                    "title": "QoI"
+                  },
+                  "space_samples": {
+                    "$ref": "#/$defs/plot_space_samples"
+                  },
+                  "repetitions": {
+                    "$ref": "#/$defs/plot_repetitions"
+                  },
+                  "timeseries": {
+                    "$ref": "#/$defs/timeseries"
+                  }
+                },
+                "required": [
+                  "qois"
+                ]
+              },
+              "default": [
+                {
+                  "qois": "D2L"
+                }
+              ]
+            },
+            "time_series_unecer79_plots": {
+              "type": "array",
+              "format": "tabs-top",
+              "title": "Time Series R79 Plots",
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "title": "Plot",
+                "properties": {
+                  "domain": {
+                    "$ref": "#/$defs/domain"
+                  },
+                  "instance":{
+                    "$ref": "#/$defs/instance"
+                  },
+                  "space_samples": {
+                    "$ref": "#/$defs/plot_space_samples"
+                  },
+                  "epistemic_samples": {
+                    "$ref": "#/$defs/plot_epistemic_samples"
+                  },
+                  "aleatory_samples": {
+                    "$ref": "#/$defs/plot_aleatory_samples"
+                  },
+                  "repetitions": {
+                    "$ref": "#/$defs/plot_repetitions"
+                  }
+                },
+                "required": [
+                  "domain",
+                  "instance"
+                ]
+              }
+            },
+            "kpi_surface_plots": {
+              "type": "array",
+              "format": "tabs-top",
+              "title": "KPI Surface Plots",
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "title": "Plot",
+                "properties": {
+                  "domain": {
+                    "$ref": "#/$defs/domain"
+                  },
+                  "instance":{
+                    "$ref": "#/$defs/instance"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "surface",
+                      "stem",
+                      "scatter",
+                      "mean_surface_stem_uncertainty"
+                    ],
+                    "title": "Type",
+                    "description": "Please select the type of this plot.",
+                    "options": {
+                      "infoText": "- 'surface': surface plot;\n- 'stem': stem plot with vertical lines for repetitions;\n- 'scatter': scatter plot with points;\n- 'mean_surface_stem_uncertainty': stem plot for repetitions and surface plot for mean of repetitions."
+                    }
+                  },
+                  "qois": {
+                    "$ref": "#/$defs/qoi_name_selection",
+                    "title": "QoI"
+                  },
+                  "space_samples": {
+                    "$ref": "#/$defs/plot_space_samples"
+                  },
+                  "epistemic_samples": {
+                    "$ref": "#/$defs/plot_epistemic_samples"
+                  },
+                  "aleatory_samples": {
+                    "$ref": "#/$defs/plot_aleatory_samples"
+                  },
+                  "repetitions": {
+                    "$ref": "#/$defs/plot_repetitions"
+                  },
+                  "parameters": {
+                    "$ref": "#/$defs/parameter_selection_array",
+                    "minItems": 2,
+                    "maxItems": 3
+                  }
+                },
+                "required": [
+                  "domain",
+                  "instance",
+                  "type",
+                  "qois",
+                  "parameters"
+                ]
+              },
+              "default": [
+                {
+                  "qois": "D2L",
+                  "parameters": [
+                    "$Ego_Init_Velocity"
+                  ]
+                }
+              ]
+            },
+            "cdf_plots": {
+              "type": "array",
+              "format": "tabs-top",
+              "title": "CDF Plots",
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "title": "Plot",
+                "properties": {
+                  "qois": {
+                    "$ref": "#/$defs/qoi_name_selection",
+                    "title": "QoI"
+                  },
+                  "space_samples": {
+                    "$ref": "#/$defs/plot_space_samples"
+                  }
+                },
+                "required": [
+                  "qois"
+                ]
+              },
+              "default": [
+                {
+                  "qois": "D2L"
+                }
+              ]
+            },
+            "metric_plots": {
+              "type": "array",
+              "format": "tabs-top",
+              "title": "Metric Plots",
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "title": "Plot",
+                "properties": {
+                  "qois": {
+                    "$ref": "#/$defs/qoi_name_selection",
+                    "title": "QoI"
+                  },
+                  "space_samples": {
+                    "$ref": "#/$defs/plot_space_samples"
+                  }
+                },
+                "required": [
+                  "qois"
+                ]
+              },
+              "default": [
+                {
+                  "qois": "D2L"
+                }
+              ]
+            },
+            "extrapolation_surface_plots": {
+              "type": "array",
+              "format": "tabs-top",
+              "title": "Extrapolation Plots",
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "title": "Plot",
+                "properties": {
+                  "qois": {
+                    "$ref": "#/$defs/qoi_name_selection",
+                    "title": "QoI"
+                  },
+                  "space_samples": {
+                    "$ref": "#/$defs/plot_space_samples"
+                  },
+                  "interval": {
+                    "type": "string",
+                    "enum": [
+                      "left",
+                      "right"
+                    ],
+                    "title": "Interval",
+                    "description": "Please select the interval."
+                  },
+                  "parameters": {
+                    "$ref": "#/$defs/parameter_selection_array",
+                    "minItems": 2,
+                    "maxItems": 2
+                  }
+                },
+                "required": [
+                  "qois",
+                  "parameters"
+                ]
+              },
+              "default": [
+                {
+                  "qois": "D2L",
+                  "interval": "left",
+                  "parameters": [
+                    "$Ego_Init_Velocity"
+                  ]
+                }
+              ]
+            },
+            "nondeterministic_uncertainty_expansion_plots": {
+              "type": "array",
+              "format": "tabs-top",
+              "title": "Non-Deterministic Expansion Plots",
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "title": "Plot",
+                "properties": {
+                  "qois": {
+                    "$ref": "#/$defs/qoi_name_selection",
+                    "title": "QoI"
+                  },
+                  "space_samples": {
+                    "$ref": "#/$defs/plot_space_samples"
+                  }
+                },
+                "required": [
+                  "qois"
+                ]
+              },
+              "default": [
+                {
+                  "qois": "D2L"
+                }
+              ]
+            },
+            "deterministic_error_integration_plots": {
+              "type": "array",
+              "format": "tabs-top",
+              "title": "Deterministic Integration Plots",
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "title": "Plot",
+                "properties": {
+                  "qois": {
+                    "$ref": "#/$defs/qoi_name_selection",
+                    "title": "QoI"
+                  },
+                  "space_samples": {
+                    "$ref": "#/$defs/plot_space_samples"
+                  }
+                },
+                "required": [
+                  "qois"
+                ]
+              },
+              "default": [
+                {
+                  "qois": "D2L"
+                }
+              ]
+            },
+            "decision_space_plots": {
+              "type": "array",
+              "format": "tabs-top",
+              "title": "Decision Space Plots",
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "title": "Plot",
+                "properties": {
+                  "validation_decisions": {
+                    "type": "string",
+                    "enum": [
+                      "accuracy",
+                      "model_safety",
+                      "system_safety",
+                      "model_system_safety"
+                    ],
+                    "title": "Validation Decisions",
+                    "description": "Please select what decisions to plot across the validation domain."
+                  },
+                  "application_decisions": {
+                    "type": "string",
+                    "enum": [
+                      "uncertainty",
+                      "uncertainty_model",
+                      "uncertainty_system"
+                    ],
+                    "title": "Application Decisions",
+                    "description": "Please select what decisions to plot across the application domain."
+                  },
+                  "qois": {
+                    "$ref": "#/$defs/qoi_name_selection",
+                    "title": "QoI"
+                  },
+                  "space_samples": {
+                    "$ref": "#/$defs/plot_space_samples"
+                  },
+                  "parameters": {
+                    "$ref": "#/$defs/parameter_selection_array",
+                    "minItems": 2,
+                    "maxItems": 3
+                  }
+                },
+                "required": [
+                  "validation_decisions",
+                  "application_decisions",
+                  "qois",
+                  "parameters"
+                ]
+              },
+              "default": [
+                {
+                  "qois": "D2L",
+                  "parameters": [
+                    "$Ego_Init_Velocity"
+                  ]
+                }
+              ]
+            }
+          },
+          "format": "categories",
+          "basicCategoryTitle": "Main"
+        },
+        "evaluation": {
+          "type": "object",
+          "title": "Evaluation",
+          "properties": {
+            "classifier_eval": {
+              "type": "object",
+              "title": "Boolean Classifier",
+              "properties": {
+                "qois": {
+                  "$ref": "#/$defs/qoi_name_selection",
+                  "title": "QoI"
+                }
+              },
+              "required": [
+                "qois"
+              ]
+            },
+            "metric_eval": {
+              "type": "object",
+              "title": "Metric Evaluation",
+              "properties": {
+                "qois": {
+                  "$ref": "#/$defs/qoi_name_selection",
+                  "title": "QoI"
+                },
+                "space_samples": {
+                  "$ref": "#/$defs/plot_space_samples"
+                },
+                "evaluation_direction": {
+                  "type": "string",
+                  "enum": [
+                    "left",
+                    "right"
+                  ]
+                }
+              },
+              "required": [
+                "qois",
+                "evaluation_direction"
+              ]
+            }
+          },
+          "format": "categories",
+          "basicCategoryTitle": "Main"
+        }
+      },
+      "format": "categories",
+      "basicCategoryTitle": "Main"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "allOf": [
+          {
+            "properties": {
+              "cross_domain": {
+                "properties": {
+                  "experiment": {
+                    "properties": {
+                      "tool": {
+                        "const": "IPG_CarMaker"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "properties": {
+              "validation": {
+                "properties": {
+                  "propagation": {
+                    "properties": {
+                      "is_propagation": {
+                        "const": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "then": {
+        "properties": {
+          "validation": {
+            "properties": {
+              "propagation": {
+                "required": [
+                  "reference_method",
+                  "reference_epistemic_method",
+                  "reference_aleatory_method",
+                  "reference_repetitions"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "format": "categories",
+  "basicCategoryTitle": "Main"
+}

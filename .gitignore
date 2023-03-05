@@ -1,0 +1,26 @@
+# Custom folders
+data/*
+!data/examples/
+data/examples/*/evaluation/
+data/examples/*/plots/
+src/applications/UNECE_R79/scripts/
+
+# Simulation
+*.roadgeo
+SimOutput/
+
+# IDEs
+.idea/
+.vscode/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Sphinx documentation
+doc/build/
+doc/source/code/
+
+# Environments
+venv/

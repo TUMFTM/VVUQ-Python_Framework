@@ -1,0 +1,20 @@
+#INFOFILE1.1 - Do not remove this line!
+FileIdent = CarMaker-OutputQuantities 1
+
+DStore.Format = erg
+DStore.Compression = none
+DStore.dt.fast = 0.001
+DStore.dt.normal = 0.01
+DStore.dt.slow = 0.1
+
+DStore.Quantities.fast:
+DStore.Quantities.normal:
+	LatCtrl.LKAS.IsActive
+	Car.ay
+	Car.v
+	LatCtrl.LKAS.SwitchedOn
+	LatCtrl.DevDist
+	LatCtrl.DistToRight
+	LatCtrl.DistToLeft
+	LatCtrl.LKAS.CurveXY_trg
+DStore.Quantities.slow:

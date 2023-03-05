@@ -1,0 +1,16 @@
+numpy
+pandas
+xarray
+matplotlib
+plotly
+asammdf
+scipy
+sklearn
+psutil
+statsmodels
+PyIPM
+jsonschema
+cmerg
+tensorflow
+sphinx
+sphinx_rtd_theme

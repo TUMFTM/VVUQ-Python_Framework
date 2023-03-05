@@ -1,0 +1,6 @@
+,Parameter,Parameter,Parameter,Filepath,KPI,KPI
+,deterministic,deterministic,deterministic,Filepath,min,max
+,$Ego_Init_Velocity,_ay_norm,$stepsize,Filepath,D2LL,Car.Jerk
+1:,100.0,0.85,0.001,sp1_100_0_sp2_0_85_sp3_0_001.erg,0.3275533294677735,2.0781400019024288
+2:,100.0,0.85,0.0005,sp1_100_0_sp2_0_85_sp3_0_0005.erg,0.32610291004180914,2.0778779363414435
+3:,100.0,0.85,0.00025,sp1_100_0_sp2_0_85_sp3_0_00025.erg,0.3252288675308228,2.078224511323723

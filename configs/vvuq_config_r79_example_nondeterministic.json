@@ -1,0 +1,468 @@
+{
+  "project": {
+    "name": "Non-deterministic UNECE-R79 Example",
+    "id": "R79_Example_Nondet",
+    "author": "Stefan Riedmaier",
+    "date": "2020-11-06",
+    "description": "This project demonstrates a non-deterministic simulation of a lane-keeping vehicle in the UNECE-R79 type approval."
+  },
+  "cross_domain": {
+    "simulator": {
+      "passive": true,
+      "simulate": true,
+      "tool": "IPG_CarMaker",
+      "result_folder": "data/Examples/R79_nondeterministic/Simulator",
+      "result_format": "erg",
+      "exe": "C:/IPG/carmaker/win64-9.1.1/bin/CM.exe",
+      "ip": "localhost",
+      "port": 16600,
+      "project": "sim",
+      "testrun": "R79_LKFT_P911_1377kg"
+    },
+    "experiment": {
+      "application": true,
+      "simulate": true,
+      "tool": "IPG_CarMaker",
+      "result_folder": "data/Examples/R79_nondeterministic/Experiment",
+      "result_format": "erg",
+      "exe": "C:/IPG/carmaker/win64-9.1.1/bin/CM.exe",
+      "ip": "localhost",
+      "port": 16600,
+      "project": "sim",
+      "testrun": "R79_LKFT_P911_1577kg"
+    },
+    "parameters": {
+      "parameters": [
+        {
+          "name": "$Ego_Init_Velocity",
+          "unit": "km/h",
+          "noise": "none",
+          "label": "AV Velocity"
+        },
+        {
+          "name": "_ay_norm",
+          "unit": "none",
+          "noise": "none",
+          "label": "Norm. Ref. Lat. Acc."
+        },
+        {
+          "name": "$stepsize",
+          "unit": "s",
+          "noise": "none",
+          "label": "Step Size"
+        }
+      ]
+    },
+    "quantities": {
+      "quantities": [
+        {
+          "name": "LatCtrl.LKAS.IsActive",
+          "unit": "none",
+          "filter": "none",
+          "noise": "none"
+        },
+        {
+          "name": "Car.ay",
+          "unit": "m/s^2",
+          "filter": "Butterworth_GRVA",
+          "noise": "none"
+        },
+        {
+          "name": "Car.v",
+          "unit": "m/s",
+          "filter": "none",
+          "noise": "none"
+        },
+        {
+          "name": "LatCtrl.LKAS.SwitchedOn",
+          "unit": "none",
+          "filter": "none",
+          "noise": "none"
+        },
+        {
+          "name": "LatCtrl.DevDist",
+          "unit": "m",
+          "filter": "none",
+          "noise": "none"
+        },
+        {
+          "name": "LatCtrl.DistToRight",
+          "unit": "m",
+          "filter": "none",
+          "noise": "none"
+        },
+        {
+          "name": "LatCtrl.DistToLeft",
+          "unit": "m",
+          "filter": "none",
+          "noise": "none"
+        },
+        {
+          "name": "LatCtrl.LKAS.CurveXY_trg",
+          "unit": "1/m",
+          "filter": "none",
+          "noise": "none"
+        }
+      ]
+    },
+    "assessment": {
+      "method": "UNECE-R79",
+      "repetition_kpi": "none",
+      "is_event_finder": false,
+      "qois": [
+        {
+          "name": "D2LL",
+          "unit": "m",
+          "kpi": "min",
+          "label": "Dist. to Left Line"
+        },
+        {
+          "name": "Car.Jerk",
+          "unit": "m/s^3",
+          "kpi": "max",
+          "label": "Ego Jerk"
+        }
+      ]
+    }
+  },
+  "verification": {
+    "scenarios": {
+      "method": "manual",
+      "space_parameters_manual": [
+        {
+          "name": "$Ego_Init_Velocity",
+          "values": [
+            100,
+            100,
+            100
+          ]
+        },
+        {
+          "name": "_ay_norm",
+          "values": [
+            0.85,
+            0.85,
+            0.85
+          ]
+        },
+        {
+          "name": "$stepsize",
+          "values": [
+            0.001,
+            0.0005,
+            0.00025
+          ]
+        }
+      ]
+    },
+    "discretization": {
+      "discretization_method": "Richardson",
+      "discretization_uncertainty": "GCI",
+      "GCI_safety_factor": 1.5
+    }
+  },
+  "calibration": {
+    "method": "none"
+  },
+  "validation": {
+    "scenarios": {
+      "method": "full_factorial_doe",
+      "space_parameters_ffd": [
+        {
+          "name": "$Ego_Init_Velocity",
+          "min": 90,
+          "max": 170,
+          "number_samples": 3
+        },
+        {
+          "name": "_ay_norm",
+          "min": 0.4,
+          "max": 0.8,
+          "number_samples": 3
+        }
+      ]
+    },
+    "propagation": {
+      "is_propagation": true,
+      "reference_method": "single_loop",
+      "reference_epistemic_method": "mcs",
+      "reference_aleatory_method": "mcs",
+      "reference_repetitions": 3,
+      "method": "two_loop",
+      "epistemic_method": "full_factorial_doe",
+      "aleatory_method": "mcs",
+      "number_aleatory_samples": 2,
+      "epistemic_parameters": [
+        {
+          "name": "$Ego_Init_Velocity",
+          "min": -1,
+          "max": 1,
+          "number_epistemic_samples": 3
+        }
+      ],
+      "aleatory_parameters": [
+        {
+          "name": "_ay_norm",
+          "distribution": "normal",
+          "mu": 0,
+          "sigma": 0.01
+        }
+      ]
+    },
+    "metric": {
+      "metric": "mavm",
+      "mavm_f0": 1,
+      "mavm_f1": 1
+    },
+    "decision_making": {
+      "qois": [
+        {
+          "name": "D2LL",
+          "type": "absolute",
+          "lower_threshold": -0.1,
+          "upper_threshold": 0.1
+        },
+        {
+          "name": "Car.Jerk",
+          "type": "absolute",
+          "lower_threshold": -0.5,
+          "upper_threshold": 0.5
+        }
+      ]
+    },
+    "error_model": {
+      "method": "linear_regression",
+      "prediction_interval": true,
+      "alpha": 0.05,
+      "extrapolation_parameters": [
+        "$Ego_Init_Velocity",
+        "_ay_norm"
+      ]
+    }
+  },
+  "application": {
+    "scenarios": {
+      "method": "full_factorial_doe",
+      "space_parameters_ffd": [
+        {
+          "name": "$Ego_Init_Velocity",
+          "min": 80,
+          "max": 180,
+          "number_samples": 4
+        },
+        {
+          "name": "_ay_norm",
+          "min": 0.35,
+          "max": 0.85,
+          "number_samples": 3
+        }
+      ]
+    },
+    "propagation": {
+      "is_propagation": true,
+      "method": "two_loop",
+      "epistemic_method": "full_factorial_doe",
+      "aleatory_method": "mcs",
+      "number_aleatory_samples": 2,
+      "epistemic_parameters": [
+        {
+          "name": "$Ego_Init_Velocity",
+          "min": -1,
+          "max": 1,
+          "number_epistemic_samples": 3
+        }
+      ],
+      "aleatory_parameters": [
+        {
+          "name": "_ay_norm",
+          "distribution": "normal",
+          "mu": 0,
+          "sigma": 0.01
+        }
+      ]
+    },
+    "error_integration": {
+      "method": "uncertainty_expansion"
+    },
+    "decision_making": {
+      "confidence": 0.5,
+      "qois": [
+        {
+          "name": "D2LL",
+          "type": "absolute",
+          "lower_threshold": 0,
+          "upper_threshold": 1000
+        },
+        {
+          "name": "Car.Jerk",
+          "type": "absolute",
+          "lower_threshold": -5,
+          "upper_threshold": 5
+        }
+      ]
+    }
+  },
+  "analysis": {
+    "plots": {
+      "scenario_space_plots": [
+        {
+          "parameters": [
+            "$Ego_Init_Velocity",
+            "_ay_norm"
+          ]
+        }
+      ],
+      "time_series_plots": [
+        {
+          "qois": "D2LL",
+          "space_samples": "1",
+          "repetitions": "0"
+        },
+        {
+          "qois": "D2LL"
+        }
+      ],
+      "time_series_unecer79_plots": [
+        {
+          "domain": "application",
+          "instance": "simulator",
+          "epistemic_samples": "0",
+          "aleatory_samples": "0"
+        },
+        {
+          "domain": "application",
+          "instance": "experiment",
+          "space_samples": "1",
+          "epistemic_samples": "0",
+          "aleatory_samples": "0"
+        },
+        {
+          "domain": "validation",
+          "instance": "simulator",
+          "space_samples": "1",
+          "epistemic_samples": "0",
+          "aleatory_samples": "0"
+        },
+        {
+          "domain": "validation",
+          "instance": "experiment",
+          "space_samples": "1",
+          "repetitions": "0"
+        }
+      ],
+      "kpi_surface_plots": [
+        {
+          "domain": "application",
+          "instance": "simulator",
+          "type": "surface",
+          "qois": "D2LL",
+          "epistemic_samples": "0",
+          "aleatory_samples": "0",
+          "parameters": [
+            "$Ego_Init_Velocity",
+            "_ay_norm"
+          ]
+        },
+        {
+          "domain": "application",
+          "instance": "experiment",
+          "type": "surface",
+          "qois": "D2LL",
+          "epistemic_samples": "0",
+          "aleatory_samples": "0",
+          "parameters": [
+            "$Ego_Init_Velocity",
+            "_ay_norm"
+          ]
+        },
+        {
+          "domain": "validation",
+          "instance": "simulator",
+          "type": "surface",
+          "qois": "D2LL",
+          "epistemic_samples": "0",
+          "aleatory_samples": "0",
+          "parameters": [
+            "$Ego_Init_Velocity",
+            "_ay_norm"
+          ]
+        },
+        {
+          "domain": "validation",
+          "instance": "experiment",
+          "type": "surface",
+          "qois": "D2LL",
+          "repetitions": "0",
+          "parameters": [
+            "$Ego_Init_Velocity",
+            "_ay_norm"
+          ]
+        }
+      ],
+      "cdf_plots": [
+        {
+          "qois": "D2LL"
+        }
+      ],
+      "metric_plots": [
+        {
+          "qois": "D2LL"
+        }
+      ],
+      "extrapolation_surface_plots": [
+        {
+          "qois": "D2LL",
+          "interval": "left",
+          "parameters": [
+            "$Ego_Init_Velocity",
+            "_ay_norm"
+          ]
+        },
+        {
+          "qois": "D2LL",
+          "interval": "right",
+          "parameters": [
+            "$Ego_Init_Velocity",
+            "_ay_norm"
+          ]
+        }
+      ],
+      "nondeterministic_uncertainty_expansion_plots": [
+        {
+          "qois": "D2LL"
+        }
+      ],
+      "deterministic_error_integration_plots": [
+      ],
+      "decision_space_plots": [
+        {
+          "validation_decisions": "model_system_safety",
+          "application_decisions": "uncertainty_model",
+          "qois": "D2LL",
+          "parameters": [
+            "$Ego_Init_Velocity",
+            "_ay_norm"
+          ]
+        },
+        {
+          "validation_decisions": "accuracy",
+          "application_decisions": "uncertainty_system",
+          "qois": "D2LL",
+          "parameters": [
+            "$Ego_Init_Velocity",
+            "_ay_norm"
+          ]
+        }
+      ]
+    },
+    "evaluation": {
+      "classifier_eval": {
+        "qois": "D2LL"
+      },
+      "metric_eval": {
+        "qois": "D2LL",
+        "evaluation_direction": "left"
+      }
+    }
+  }
+}

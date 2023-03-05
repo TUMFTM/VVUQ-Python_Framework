@@ -1,0 +1,24 @@
+#INFOFILE1.1 - Do not remove this line!
+FileIdent = CarMaker-DVA 4.0
+nDialogQu = 10
+Qu.0.Name = Driver.Steer.Ang
+Qu.0.Mode = - value
+Qu.0.Count = -1
+Qu.0.Value = 0
+Qu.0.Unit = rad
+Qu.1.Name = Driver.Steer.Trq
+Qu.1.Mode = - value
+Qu.1.Count = -1
+Qu.1.Value = 0
+Qu.1.Unit = Nm
+Qu.2.Name = DM.Steer.Trq
+Qu.2.Mode = - value
+Qu.2.Count = -1
+Qu.2.Value = 0
+Qu.2.Unit = Nm
+Qu.3.Name = DM.Steer.Ang
+Qu.3.Mode = - value
+Qu.3.Count = -1
+Qu.3.Value = 0
+Qu.3.Unit = rad
+nQu = 4

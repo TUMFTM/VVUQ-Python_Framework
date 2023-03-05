@@ -1,0 +1,33 @@
+#INFOFILE1.1 - Do not remove this line!
+FileIdent = CarMaker-TestSeries 9
+FileCreator = CarMaker 9.1.1 2020-12-18
+Description:
+LastChange = 2021-01-08 23:54:49 na
+StartTime =
+EndTime =
+ReportTemplate =
+Step.0 = Settings
+Step.0.Name = Global Settings
+Step.1 = TestRun
+Step.1.Name = R79_LKFT_P911_1377kg
+Step.1.Param.0 = Ego_Init_Velocity NValue
+Step.1.Param.1 = Radius NValue
+Step.1.Param.2 = ResultFName CM
+Step.1.Var.0.Name = Variation 0
+Step.1.Var.0.Param = 90.0 625.0 ../data/Examples/R79_deterministic/Simulator/validation/sp1_90_0_sp2_0_4.erg
+Step.1.Var.1.Name = Variation 1
+Step.1.Var.1.Param = 90.0 416.66666666666663 ../data/Examples/R79_deterministic/Simulator/validation/sp1_90_0_sp2_0_6.erg
+Step.1.Var.2.Name = Variation 2
+Step.1.Var.2.Param = 90.0 312.5 ../data/Examples/R79_deterministic/Simulator/validation/sp1_90_0_sp2_0_8.erg
+Step.1.Var.3.Name = Variation 3
+Step.1.Var.3.Param = 130.0 1304.012345679012 ../data/Examples/R79_deterministic/Simulator/validation/sp1_130_0_sp2_0_4.erg
+Step.1.Var.4.Name = Variation 4
+Step.1.Var.4.Param = 130.0 869.3415637860079 ../data/Examples/R79_deterministic/Simulator/validation/sp1_130_0_sp2_0_6.erg
+Step.1.Var.5.Name = Variation 5
+Step.1.Var.5.Param = 130.0 652.006172839506 ../data/Examples/R79_deterministic/Simulator/validation/sp1_130_0_sp2_0_8.erg
+Step.1.Var.6.Name = Variation 6
+Step.1.Var.6.Param = 170.0 2229.938271604938 ../data/Examples/R79_deterministic/Simulator/validation/sp1_170_0_sp2_0_4.erg
+Step.1.Var.7.Name = Variation 7
+Step.1.Var.7.Param = 170.0 1486.6255144032918 ../data/Examples/R79_deterministic/Simulator/validation/sp1_170_0_sp2_0_6.erg
+Step.1.Var.8.Name = Variation 8
+Step.1.Var.8.Param = 170.0 1114.969135802469 ../data/Examples/R79_deterministic/Simulator/validation/sp1_170_0_sp2_0_8.erg

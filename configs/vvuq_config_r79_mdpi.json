@@ -1,0 +1,288 @@
+{
+  "project": {
+    "name": "MDPI Paper with UNECE-R79 PoC",
+    "id": "MDPI_PoC_Paper",
+    "author": "Stefan Riedmaier",
+    "date": "2020-12-03",
+    "description": "This project configures my VVUQ framework for my MDPI paper."
+  },
+  "cross_domain": {
+    "simulator": {
+      "passive": true,
+      "simulate": false,
+      "tool": "R79_Vehicle",
+      "result_folder": "data/MDPI_Paper/Simulator",
+      "result_format": "mf4"
+    },
+    "experiment": {
+      "application": false,
+      "simulate": false,
+      "tool": "R79_Vehicle",
+      "result_folder": "data/MDPI_Paper/Experiment",
+      "result_format": "mf4"
+    },
+    "parameters": {
+      "parameters": [
+        {
+          "name": "$Ego_Init_Velocity",
+          "unit": "km/h",
+          "noise": "none",
+          "label": "AV Velocity"
+        },
+        {
+          "name": "_ay_norm",
+          "unit": "none",
+          "noise": "none",
+          "label": "Norm. Ref. Lat. Acc."
+        }
+      ]
+    },
+    "quantities": {
+      "quantities": [
+        {
+          "name": "LatCtrl.LKAS.IsActive",
+          "unit": "none",
+          "filter": "none",
+          "noise": "none"
+        },
+        {
+          "name": "Car.ay",
+          "unit": "m/s^2",
+          "filter": "none",
+          "noise": "none"
+        },
+        {
+          "name": "Car.ay_ref",
+          "unit": "m/s^2",
+          "filter": "none",
+          "noise": "none"
+        },
+        {
+          "name": "LatCtrl.LKAS.CurveXY_trg",
+          "unit": "1/m",
+          "filter": "none",
+          "noise": "none"
+        },
+        {
+          "name": "LatCtrl.LKAS.CurveXY_trg_BUS",
+          "unit": "1/m",
+          "filter": "none",
+          "noise": "none"
+        },
+        {
+          "name": "Car.v",
+          "unit": "m/s",
+          "filter": "none",
+          "noise": "none"
+        },
+        {
+          "name": "LatCtrl.LKAS.SwitchedOn",
+          "unit": "none",
+          "filter": "none",
+          "noise": "none"
+        },
+        {
+          "name": "LatCtrl.DevDist",
+          "unit": "m",
+          "filter": "none",
+          "noise": "none"
+        },
+        {
+          "name": "D2RL",
+          "unit": "m",
+          "filter": "none",
+          "noise": "none"
+        },
+        {
+          "name": "D2LL",
+          "unit": "m",
+          "filter": "none",
+          "noise": "none"
+        },
+        {
+          "name": "D2LL_SHAPE_BUS",
+          "unit": "m",
+          "filter": "none",
+          "noise": "none"
+        },
+        {
+          "name": "D2RL_SHAPE_BUS",
+          "unit": "m",
+          "filter": "none",
+          "noise": "none"
+        }
+      ]
+    },
+    "assessment": {
+      "method": "UNECE-R79",
+      "repetition_kpi": "none",
+      "is_event_finder": true,
+      "qois": [
+        {
+          "name": "D2L",
+          "unit": "m",
+          "kpi": "min",
+          "label": "Dist. to Left Line"
+        }
+      ]
+    }
+  },
+  "verification": {
+    "scenarios": {
+      "method": "read_csv"
+    },
+    "discretization": {
+      "discretization_method": "none"
+    }
+  },
+  "calibration": {
+    "method": "none"
+  },
+  "validation": {
+    "scenarios": {
+      "method": "read_csv"
+    },
+    "propagation": {
+      "is_propagation": false
+    },
+    "metric": {
+      "metric": "mavm",
+      "mavm_f0": 1,
+      "mavm_f1": 1
+    },
+    "decision_making": {
+      "qois": [
+        {
+          "name": "D2L",
+          "type": "absolute",
+          "lower_threshold": -0.1,
+          "upper_threshold": 0.1
+        }
+      ]
+    },
+    "error_model": {
+      "method": "linear_regression",
+      "prediction_interval": true,
+      "alpha": 0.05,
+      "extrapolation_parameters": [
+        "$Ego_Init_Velocity",
+        "_ay_norm"
+      ]
+    }
+  },
+  "application": {
+    "scenarios": {
+      "method": "read_csv"
+    },
+    "propagation": {
+      "is_propagation": false
+    },
+    "error_integration": {
+      "method": "uncertainty_expansion"
+    },
+    "decision_making": {
+      "confidence": 0.49,
+      "qois": [
+        {
+          "name": "D2L",
+          "type": "absolute",
+          "lower_threshold": 0,
+          "upper_threshold": 1000
+        }
+      ]
+    }
+  },
+  "analysis": {
+    "plots": {
+      "scenario_space_plots": [
+        {
+          "parameters": [
+            "$Ego_Init_Velocity",
+            "_ay_norm"
+          ]
+        }
+      ],
+      "time_series_plots": [
+      ],
+      "time_series_unecer79_plots": [
+      ],
+      "kpi_surface_plots": [
+        {
+          "domain": "application",
+          "instance": "simulator",
+          "type": "stem",
+          "qois": "D2L",
+          "parameters": [
+            "$Ego_Init_Velocity",
+            "_ay_norm"
+          ]
+        },
+        {
+          "domain": "validation",
+          "instance": "simulator",
+          "type": "mean_surface_stem_uncertainty",
+          "qois": "D2L",
+          "parameters": [
+            "$Ego_Init_Velocity",
+            "_ay_norm"
+          ]
+        },
+        {
+          "domain": "validation",
+          "instance": "experiment",
+          "type": "mean_surface_stem_uncertainty",
+          "qois": "D2L",
+          "parameters": [
+            "$Ego_Init_Velocity",
+            "_ay_norm"
+          ]
+        }
+      ],
+      "cdf_plots": [
+      ],
+      "metric_plots": [
+        {
+          "qois": "D2L",
+          "space_samples": "slice(6, 7)"
+        }
+      ],
+      "extrapolation_surface_plots": [
+        {
+          "qois": "D2L",
+          "interval": "left",
+          "parameters": [
+            "$Ego_Init_Velocity",
+            "_ay_norm"
+          ]
+        },
+        {
+          "qois": "D2L",
+          "interval": "right",
+          "parameters": [
+            "$Ego_Init_Velocity",
+            "_ay_norm"
+          ]
+        }
+      ],
+      "nondeterministic_uncertainty_expansion_plots": [
+      ],
+      "deterministic_error_integration_plots": [
+        {
+          "qois": "D2L",
+          "space_samples": "slice(4, 5)"
+        }
+      ],
+      "decision_space_plots": [
+        {
+          "validation_decisions": "model_system_safety",
+          "application_decisions": "uncertainty_model",
+          "qois": "D2L",
+          "parameters": [
+            "$Ego_Init_Velocity",
+            "_ay_norm"
+          ]
+        }
+      ]
+    }
+  }
+}

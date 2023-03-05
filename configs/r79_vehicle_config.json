@@ -1,0 +1,26 @@
+{
+  "vx_min": {
+    "value": 11.0,
+    "unit": "m/s"
+  },
+  "vx_max": {
+    "value": 70.0,
+    "unit": "m/s"
+  },
+  "ay_smax": {
+    "value": 2.5,
+    "unit": "m/s^2"
+  },
+  "ay_max": {
+    "value": 3,
+    "unit": "m/s^2"
+  },
+  "ay_upper_bound": {
+    "value": 0.9,
+    "unit": "%"
+  },
+  "ay_lower_bound": {
+    "value": 0.8,
+    "unit": "%"
+  }
+}

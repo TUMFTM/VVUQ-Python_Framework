@@ -1,0 +1,154 @@
+#INFOFILE1.1 - Do not remove this line!
+
+File.Format = erg
+File.ByteOrder = LittleEndian
+File.DateInSeconds = 1610147473
+File.DateLocal = 2021-01-09 00:11:13 Mitteleuropäische Zeit
+
+File.At.1.Name = Time
+File.At.1.Type = Double
+Quantity.Time.Unit = s
+
+File.At.2.Name = Car.ay
+File.At.2.Type = Float
+Quantity.Car.ay.Unit = m/s^2
+
+File.At.3.Name = Car.v
+File.At.3.Type = Float
+Quantity.Car.v.Unit = m/s
+
+File.At.4.Name = LatCtrl.DevDist
+File.At.4.Type = Float
+Quantity.LatCtrl.DevDist.Unit = m
+
+File.At.5.Name = LatCtrl.DistToLeft
+File.At.5.Type = Float
+Quantity.LatCtrl.DistToLeft.Unit = m
+
+File.At.6.Name = LatCtrl.DistToRight
+File.At.6.Type = Float
+Quantity.LatCtrl.DistToRight.Unit = m
+
+File.At.7.Name = LatCtrl.LKAS.CurveXY_trg
+File.At.7.Type = Float
+Quantity.LatCtrl.LKAS.CurveXY_trg.Unit = 1/m
+
+File.At.8.Name = LatCtrl.LKAS.IsActive
+File.At.8.Type = Int
+Quantity.LatCtrl.LKAS.IsActive.nStates = 2
+
+File.At.9.Name = LatCtrl.LKAS.SwitchedOn
+File.At.9.Type = Int
+Quantity.LatCtrl.LKAS.SwitchedOn.nStates = 2
+
+Anim.Msg.0.Time = 0
+Anim.Msg.0.Class = Anim
+Anim.Msg.0.Id = 18
+Anim.Msg.0.Data:
+	UuAuoyK5KL8kQ6ab1Q/eR0Yv2f1S4C4zAAAAXgAAAF4AAAAAABJ3aW42NABPZmZs
+	aW5lADkuMS4xAEM6L1VzZXJzL2RjdHV4bDAvVlZVUS9zaW0AUjc5X0xLRlRfUDkx
+	MV8xNTc3a2cAUjc5X0xLRlRfUDkxMV8xNTc3a2cAAAFf9QoK
+
+Anim.Msg.1.Time = 0
+Anim.Msg.1.Class = Anim
+Anim.Msg.1.Id = 21
+Anim.Msg.1.Data:
+	mn2piLLVZ1+dLfRUA5cMfWz2PXGafakUAAAAaAAAAGgAAAAAABUAAAAAAAAAAAAA
+	AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+	AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK
+
+Anim.VehicleClass = Car
+Anim.Vehicle.MovieSkin = 3D/Vehicles/Porsche_911Turbo_2012.mobj
+
+Anim.Msg.2.Time = 0
+Anim.Msg.2.Class = Anim
+Anim.Msg.2.Id = 11
+Anim.Msg.2.Data:
+	uQIN/aekFi0nWWw0HCDVEhpym8a5AgzNAAAA2AAAANgAAAAAAAsEAAACAAAAAAAA
+	P0l41T6euFJAkDlYv0Sbpj+mBBkAAAAAAAAAAAAAAABAGIMSAAAAAD8FoctExSAA
+	RMTQAL3MzM0AAAAAPszMzUBdcKQ/RJumPp64UkBdcKS/RJumPp64Uj+BR64/SXjV
+	Ppsi0T+BR66/SXjVPpsi0QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+	AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+	vczMzQAAAAA+zMzN
+
+Anim.Msg.3.Time = 0
+Anim.Msg.3.Class = Anim
+Anim.Msg.3.Id = 15
+Anim.Msg.3.Data:
+	AJ+HZvBYJT9rMunptr3JGDH155QAn4euAAAAiAAAAIgAAAAAAA8EAAAAAAAAAQAA
+	Pq4Uez6CLQ4AAAAAPnrhSIAAAAAAAAAARbLAAAH/AAA+rhR7PoItDoAAAAA+euFI
+	AAAAAAAAAABFssAAAgEAAD6qfvo+d0vHAAAAAD6cKPaAAAAAAAAAAEXUgAAD/wAA
+	Pqp++j53S8eAAAAAPpwo9gAAAAAAAAAARdSAAAoK
+
+Anim.Msg.4.Time = 0
+Anim.Msg.4.Class = Anim
+Anim.Msg.4.Id = 23
+Anim.Msg.4.Data:
+	HyTqvgsvG/ECyGJiHzI1Qv/ClsofJOpmAAAAlAAAAJQAAAAAABcAAAAAAAAAAAAA
+	AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+	AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+	AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoK
+
+Anim.Msg.5.Time = 0
+Anim.Msg.5.Class = Instr
+Anim.Msg.5.Id = 0
+Anim.Msg.5.Data:
+	Z8FkZG7sSkpSOZeuvHC6D+N8YPRnwWRIAAAAFAAAABQAAAAAAAAAAAAHAAFF2IaC
+	Q7lMQgAAAAEK
+
+Anim.Msg.6.Time = 0
+Anim.Msg.6.Class = Anim
+Anim.Msg.6.Id = 22
+Anim.Msg.6.Data:
+	hUfI0wm6kMyLuhi4rqoEnvp4inaFR8j/AAAAFAAAABQAAAAAABYAAAAHAAFF2IaC
+	Q7lMQgAAAAEK
+
+Anim.Msg.7.Time = 0
+Anim.Msg.7.Class = Anim
+Anim.Msg.7.Id = 17
+Anim.Msg.7.Data:
+	zuJB+tTQlMm7HEIb+MfBkgut4vzO4kHiAAAABAAAAAQAAAAAABEAAAoK
+
+Anim.Msg.8.Time = 0
+Anim.Msg.8.Class = Anim
+Anim.Msg.8.Id = 20
+Anim.Msg.8.Data:
+	62mnsHdkTJOKk7T7wSBjp1ZN/nrraaeYAAAAEQAAABEAAAAAABQAAQAAAAAAAAAA
+	UkQwMAAK
+
+Anim.Msg.9.Time = 0
+Anim.Msg.9.Class = Anim
+Anim.Msg.9.Id = 29
+Anim.Msg.9.Data:
+	NQQgKLmBQrINmGLo0Pbg2j6XPBU1BCB8AAAAMQAAADEAAAAAAB0AAUJIAAA/srjC
+	P0kP2kAjMzMAAAAAP5MzMwAAAAAAAAAAAAAAAAAAAABMTjAwAAoK
+
+Testrun = R79_LKFT_P911_1577kg
+
+SimParam.DeltaT = 0.001
+
+NamedValues.Count = 2
+NamedValues.0.Name = Ego_Init_Velocity
+NamedValues.0.Value = 113.33333333333334
+NamedValues.1.Name = Radius
+NamedValues.1.Value = 659.6937903442844
+
+KeyValues.Count = 1
+KeyValues.0.Key = SimParameters:DStore.OutPath
+KeyValues.0.Type = str
+KeyValues.0.Value = ../data/Examples/R79_nondeterministic/Experiment/application/sp1_113_33_sp2_0_6/ep1_80_0/aps1.erg_000029
+
+GPUSensors.Count = 0
+
+Comment:
+	For more details see session logfile
+
+CarMaker.NumVersion = 90101
+CarMaker.Version = 9.1.1
+CarMaker.Version.MatSupp = 9.0.3
+CarMaker.Version.Apo = 1.37.1
+CarMaker.Version.Info = 1.23
+CarMaker.Version.Driver = 9.1
+CarMaker.Version.Road = 9.1.1
+CarMaker.Version.Tire = 9.0.2
+
