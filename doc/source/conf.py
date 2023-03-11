@@ -56,3 +56,30 @@ html_theme = 'sphinx_rtd_theme'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+
+# -- Build code documentation ------------------------------------------------
+def run_apidoc(_):
+    """Run sphinx-apidoc when building the documentation.
+    
+    Needs to be done in conf.py for readthedocs.
+    
+    See also https://github.com/rtfd/readthedocs.org/issues/1139
+    """
+    from sphinx.ext.apidoc import main
+    import os
+    import sys
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+    # specify path where the source files should be placed
+    source_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "src")
+
+    # specify path of the module to be documented
+    module_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "..", "..", "src")
+
+    # call apidoc main
+    main(['-e', '-o', source_dir, module_dir, '--force'])
+
+
+def setup(app):
+    app.connect('builder-inited', run_apidoc)

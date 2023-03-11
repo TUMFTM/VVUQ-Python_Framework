@@ -13,13 +13,12 @@ The code was developed with the Pycharm IDE using **Python 3.7** installed in a 
 
 The framework is connected to the CarMaker simulator that is often used in the automotive industry. The installation and licensing is described in the customer portal of the tool manufacturer. A simulator is required to perform the simulations during the model-based VVUQ process. Nevertheless, it is possible to load the already executed simulations from the small example within this repository without actual access to the simulator.
 
-The documentation is build with Sphinx and hosted online. When re-building it, we have to
+The documentation is build with Sphinx and hosted online at Read the Docs. When re-building it locally, we have to
 
-1. activate the venv including Sphinx in the console,
+1. activate a venv including Sphinx in the console,
 2. navigate to the doc folder, and
-3. execute the following commands to generate rst files from the code docstrings and build the html pages both from the generated and the manual rst files.
+3. execute the following command to build the html pages both from manual rst files and generated ones via api-doc and python docstrings.
 
 .. code-block:: bash
 
-    sphinx-apidoc -o source/code ../src
     make html

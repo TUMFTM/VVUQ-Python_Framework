@@ -57,7 +57,7 @@ Contents
    :maxdepth: 2
    :caption: Code Documentation:
 
-   code/modules.rst
+   src/modules.rst
 
 Contact
 =======
