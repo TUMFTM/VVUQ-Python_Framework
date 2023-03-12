@@ -10,7 +10,7 @@ Working with this framework means fully configuring everything at the start, exe
 This software comes from a single PhD thesis and is provided as is. Therefore, the primary purpose of the software was to provide all functionalities required to pursue the research and the corresponding publications. Nevertheless, the software was designed with the thought in mind that it might be further developed and used by someone else in the future. The code has a modular architecture and extensive documentation in the code files. However, due to limited time and human resources, this code has not been subjected to extensive testing as in larger projects. In case the software will be further developed, there might be breaking changes in the config files, component interfaces, or function signatures.
 
 ### Documentation
-A high-level documentation of the framework can be found in the doc folder.
+The documentation of the framework can be found in the doc folder and is hosted [here](https://vvuq-python-framework.readthedocs.io/en/latest/).
 
 ### Contact
 [Stefan Riedmaier](mailto:stefan.riedmaier@tum.de).
